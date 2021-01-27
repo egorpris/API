@@ -1,0 +1,356 @@
+{
+	"info": {
+		"_postman_id": "2563a06e-4e2e-4355-9d3b-35c4e425f2a3",
+		"name": "task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "authorization",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Response body contains Bearer access token\"] = responseBody.has(\"access_token\") === true;\r",
+							"  postman.setEnvironmentVariable(\"access_token\", data.access_token);\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Response body doesn't contain Bearer access token: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Exploratory5@1.1",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Exploratory5@1.1",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/auth/access_token",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"auth",
+						"access_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task has been created successfully\"] = responseBody.has(\"Моя задача\") === true;\r",
+							"  postman.setEnvironmentVariable(\"task_id\", data.data.id);\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task has not been created: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"contentType\": \"Task\",\r\n    \"isUrgent\": false,\r\n    \"isTemplate\": false,\r\n    \"name\": \"Моя задача\",\r\n    \"responsible\": {\r\n        \"contentType\": \"Employee\",\r\n        \"id\": \"1000147\"\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Comment has been added\"] = responseBody.has(\"Комментарий\") === true;\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Comment has not been added: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"contentType\": \"CommentCreateActionRequest\",\r\n \"comment\": {\r\n        \"contentType\": \"Comment\",\r\n        \"content\": \"Комментарий\",\r\n        \"owner\": {  \"contentType\": \"Employee\",\r\n                    \"id\": \"1000147\"\r\n                }\r\n }\r\n}"
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/comments",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add milestone",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Milestone has been added\"] = responseBody.has(\"Подведение итогов\") === true;\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Milestone has not been added: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"contentType\": \"Milestone\",\r\n\"description\": \"Подведение итогов\",\r\n\"type\": \"note\",\r\n\"date\": {\r\n    \"contentType\": \"DateTime\",\r\n    \"value\": \"2020-12-27T09:00:00+00:00\"\r\n}\r\n}"
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/milestones",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"milestones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "close task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task is closed\"] = responseBody.has(\"cancelled\") === true;\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task is not closed: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"contentType\": \"TaskActionRequest\",\r\n    \"action\": \"act_cancel\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}/doAction",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}",
+						"doAction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (responseCode.code === 200) {\r",
+							"    \r",
+							"  var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task has been removed\"] = responseBody.has(\"Task successfully removed\") === true;\r",
+							"}\r",
+							"else {var data = JSON.parse(responseBody);\r",
+							"  tests[\"Task has not been removed: \" + responseBody] = false;\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://radio-shop.megaplan.by/api/v3/task/{{task_id}}",
+					"protocol": "https",
+					"host": [
+						"radio-shop",
+						"megaplan",
+						"by"
+					],
+					"path": [
+						"api",
+						"v3",
+						"task",
+						"{{task_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
